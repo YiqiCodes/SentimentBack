@@ -17,27 +17,33 @@ const getUsers = (request, response) => {
 };
 
 const getUserById = (request, response) => {
-  const id = parseInt(request.params.id);
-
-  pool.query("SELECT * FROM users WHERE id = $1", [id], (error, results) => {
-    if (error) {
-      throw error;
-    }
-    response.status(200).json(results.rows);
-  });
-};
-
-const createUser = (request, response) => {
-  const { name, sentiment_score } = request.body;
+  console.log("getuser", request.params);
 
   pool.query(
-    "INSERT INTO users (name, sentiment_score) VALUES ($1, $2)",
-    [name, sentiment_score],
+    "SELECT * FROM users WHERE name = $1",
+    [request.params.username],
     (error, results) => {
       if (error) {
         throw error;
       }
-      response.status(201).send(`User added with ID: ${result.insertId}`);
+      // console.log("logged in");
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const createUser = (request, response) => {
+  console.log("create user", request.body);
+  const { username } = request.body;
+
+  pool.query(
+    "INSERT INTO users (name, sentiment_score) VALUES ($1, 0)",
+    [username],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(201).send(`User added with ID: ${username}`);
     }
   );
 };

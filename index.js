@@ -24,8 +24,10 @@ app.use(function (req, res, next) {
 });
 
 app.get("/users", db.getUsers);
-app.get("/users/:id", db.getUserById);
-app.post("/users", db.createUser);
+
+app.get("/users/:username", db.getUserById);
+
+app.put("/users/register", db.createUser);
 
 app.put("/users/update", db.updateUser);
 
