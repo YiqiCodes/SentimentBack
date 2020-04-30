@@ -14,10 +14,21 @@ app.use(
   })
 );
 
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3002");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 app.get("/users", db.getUsers);
 app.get("/users/:id", db.getUserById);
 app.post("/users", db.createUser);
+
 app.put("/users/update", db.updateUser);
+
 app.delete("/users/:id", db.deleteUser);
 
 app.get("/", (request, response) => {

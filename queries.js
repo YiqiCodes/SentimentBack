@@ -43,17 +43,20 @@ const createUser = (request, response) => {
 };
 
 const updateUser = (request, response) => {
-  const id = parseInt(request.params.id);
-  const { name, sentiment_score } = request.body;
+  console.log("req", request.body);
+  // console.log("response", response);
+
+  // const id = parseInt(request.params.id);
+  const { sentiment_score } = request.body;
 
   pool.query(
     "UPDATE users SET name = $1, sentiment_score = $2 WHERE id = $3",
-    [name, sentiment_score, id],
+    ["Adam", sentiment_score, 1],
     (error, results) => {
       if (error) {
         throw error;
       }
-      response.status(200).send(`User modified with ID: ${id}`);
+      response.status(200).send(`User modified with ID: ${1}`);
     }
   );
 };
