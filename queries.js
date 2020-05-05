@@ -26,8 +26,8 @@ const getUserById = (request, response) => {
       if (error) {
         throw error;
       }
-      // console.log("logged in");
-      response.status(200).json(results.rows);
+      console.log("results row", results.rows);
+      response.status(200).json(results.rows[0]);
     }
   );
 };
@@ -49,15 +49,11 @@ const createUser = (request, response) => {
 };
 
 const updateUser = (request, response) => {
-  console.log("req", request.body);
-  // console.log("response", response);
-
-  // const id = parseInt(request.params.id);
-  const { sentiment_score } = request.body;
+  const { sentiment_score, username, userId } = request.body;
 
   pool.query(
     "UPDATE users SET name = $1, sentiment_score = $2 WHERE id = $3",
-    ["Adam", sentiment_score, 1],
+    [username, sentiment_score, userId],
     (error, results) => {
       if (error) {
         throw error;
