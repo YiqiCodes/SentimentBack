@@ -1,0 +1,1 @@
+CREATE SCHEMA sentiment_analysis;
