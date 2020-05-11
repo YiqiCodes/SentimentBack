@@ -20,7 +20,7 @@ const getUserById = (request, response) => {
   console.log("getuser", request.params);
 
   pool.query(
-    "SELECT * FROM users WHERE name = $1",
+    "SELECT * FROM users WHERE username = $1",
     [request.params.username],
     (error, results) => {
       if (error) {
@@ -37,7 +37,7 @@ const createUser = (request, response) => {
   const { username } = request.body;
 
   pool.query(
-    "INSERT INTO users (name, sentiment_score) VALUES ($1, 0)",
+    "INSERT INTO users (username, sentiment_score) VALUES ($1, 0)",
     [username],
     (error, results) => {
       if (error) {
@@ -52,7 +52,7 @@ const updateUser = (request, response) => {
   const { sentiment_score, username, userId } = request.body;
 
   pool.query(
-    "UPDATE users SET name = $1, sentiment_score = $2 WHERE id = $3",
+    "UPDATE users SET username = $1, sentiment_score = $2 WHERE id = $3",
     [username, sentiment_score, userId],
     (error, results) => {
       if (error) {
