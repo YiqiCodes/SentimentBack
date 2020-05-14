@@ -2,7 +2,6 @@ require("dotenv").config({
   path: process.env.NODE_ENV === "production" ? "./.env" : "./.env.development",
 });
 
-console.log("env", process.env);
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
