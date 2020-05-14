@@ -26,6 +26,10 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.get("/", function (req, res) {
+  res.redirect("/users");
+});
+
 app.get("/users", db.getUsers);
 
 app.get("/users/:username", db.getUserById);
