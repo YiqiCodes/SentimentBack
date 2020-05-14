@@ -1,14 +1,25 @@
-const Pool = require("pg").Pool;
-const pool = new Pool({
-  user: "yiqi",
-  host: "localhost",
-  database: "sentiment",
-  password: "password",
-  port: 5432,
-});
+const { Client, Pool } = require("pg");
+
+const client =
+  process.env.NODE_ENV === "production"
+    ? new Client({
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      })
+    : new Pool({
+        user: process.env.PGUSER,
+        host: process.env.PGHOST,
+        database: process.env.PGDATABASE,
+        password: process.env.PGPASSWORD,
+        port: process.env.PGPORT,
+      });
+
+client.connect();
 
 const getUsers = (request, response) => {
-  pool.query("SELECT * FROM users ORDER BY id ASC", (error, results) => {
+  client.query("SELECT * FROM users ORDER BY id ASC", (error, results) => {
     if (error) {
       throw error;
     }
@@ -19,7 +30,7 @@ const getUsers = (request, response) => {
 const getUserById = (request, response) => {
   console.log("getuser", request.params);
 
-  pool.query(
+  client.query(
     "SELECT * FROM users WHERE username = $1",
     [request.params.username],
     (error, results) => {
@@ -36,7 +47,7 @@ const createUser = (request, response) => {
   console.log("create user", request.body);
   const { username } = request.body;
 
-  pool.query(
+  client.query(
     "INSERT INTO users (username, sentiment_score) VALUES ($1, 0)",
     [username],
     (error, results) => {
@@ -51,7 +62,7 @@ const createUser = (request, response) => {
 const updateUser = (request, response) => {
   const { sentiment_score, username, userId } = request.body;
 
-  pool.query(
+  client.query(
     "UPDATE users SET username = $1, sentiment_score = $2 WHERE id = $3",
     [username, sentiment_score, userId],
     (error, results) => {
@@ -66,7 +77,7 @@ const updateUser = (request, response) => {
 const deleteUser = (request, response) => {
   const id = parseInt(request.params.id);
 
-  pool.query("DELETE FROM users WHERE id = $1", [id], (error, results) => {
+  client.query("DELETE FROM users WHERE id = $1", [id], (error, results) => {
     if (error) {
       throw error;
     }

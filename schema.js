@@ -1,15 +1,27 @@
-const Pool = require("pg").Pool;
-
-// Declare a constant for the Postgres ROLE
-const postgresRole = "yiqi";
-
-const pool = new Pool({
-  user: postgresRole,
-  host: "localhost",
-  database: "sentiment",
-  password: "password",
-  port: 5432,
+require("dotenv").config({
+  path: process.env.NODE_ENV === "production" ? "./.env" : "./.env.development",
 });
+const { Client, Pool } = require("pg");
+
+console.log("node_env", process.env.NODE_ENV);
+
+const client =
+  process.env.NODE_ENV === "production"
+    ? new Client({
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      })
+    : new Pool({
+        user: process.env.PGUSER,
+        host: process.env.PGHOST,
+        database: process.env.PGDATABASE,
+        password: process.env.PGPASSWORD,
+        port: process.env.PGPORT,
+      });
+
+client.connect();
 
 const createUsersTable = async () => {
   const createTableSql = `CREATE TABLE users(
@@ -20,7 +32,7 @@ const createUsersTable = async () => {
 
   console.log("\ncreateTableSql:", createTableSql);
 
-  await pool.query(createTableSql).then((tableErr, tableRes) => {
+  await client.query(createTableSql).then((tableErr, tableRes) => {
     if (tableErr) {
       console.log("createTableSql:", tableErr);
     }
@@ -36,7 +48,7 @@ const dropUsersTable = () => {
 
   console.log("\ndropTableSql:", dropTableSql);
 
-  pool.query(dropTableSql).then((tableErr, tableRes) => {
+  client.query(dropTableSql).then((tableErr, tableRes) => {
     if (tableErr) {
       console.log("dropTableSql:", tableErr);
     }
