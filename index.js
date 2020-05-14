@@ -1,6 +1,8 @@
 require("dotenv").config({
   path: process.env.NODE_ENV === "production" ? "./.env" : "./.env.development",
 });
+
+console.log("env", process.env);
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
@@ -26,10 +28,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.get("/", function (req, res) {
-  res.redirect("/users");
-});
-
 app.get("/users", db.getUsers);
 
 app.get("/users/:username", db.getUserById);
@@ -44,6 +42,6 @@ app.get("/", (request, response) => {
   response.json({ info: "Node.js, Express, and Postgres API" });
 });
 
-app.listen(port, () => {
-  console.log(`App running on port ${port}.`);
+app.listen(process.env.PGPORT || port, () => {
+  console.log(`App running on port ${process.env.PGPORT || port}.`);
 });
