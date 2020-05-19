@@ -38,6 +38,8 @@ app.put("/users/update", db.updateUser);
 
 app.delete("/users/:id", db.deleteUser);
 
+app.post("create-analysis", db.createAnalysis);
+
 app.get("/", (request, response) => {
   response.json({ info: "Node.js, Express, and Postgres API" });
 });

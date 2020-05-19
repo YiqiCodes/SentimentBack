@@ -3,8 +3,6 @@ require("dotenv").config({
 });
 const { Client, Pool } = require("pg");
 
-console.log("node_env", process.env.NODE_ENV);
-
 const client =
   process.env.NODE_ENV === "production"
     ? new Client({

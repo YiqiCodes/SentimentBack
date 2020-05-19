@@ -85,10 +85,32 @@ const deleteUser = (request, response) => {
   });
 };
 
+const createAnalysis = (request, response) => {
+  const userID = request.params.userID;
+  const text = parseInt(request.params.text);
+  const score = parseInt(request.params.score);
+
+  client.query(
+    "CREATE ANALYSIS idk how to do this...", // Find user in analysis table, which is a table with userID (primary key), text, and score columns
+    [userID, text, score],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).send({
+        userID,
+        text,
+        score,
+      });
+    }
+  );
+};
+
 module.exports = {
   getUsers,
   getUserById,
   createUser,
   updateUser,
   deleteUser,
+  createAnalysis,
 };
