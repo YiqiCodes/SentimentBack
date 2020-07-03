@@ -24,7 +24,43 @@ client.connect();
 const createUsersTable = async () => {
   const createTableSql = `CREATE TABLE users(
     id SERIAL PRIMARY KEY,
-    username VARCHAR(45) UNIQUE NOT NULL,
+    username VARCHAR(45) UNIQUE NOT NULL
+  );`;
+
+  console.log("\ncreateTableSql:", createTableSql);
+
+  await client.query(createTableSql).then((tableErr, tableRes) => {
+    if (tableErr) {
+      console.log("createTableSql:", tableErr);
+    }
+
+    if (tableRes) {
+      console.log("\nCREATE TABLE RESULT:", tableRes);
+    }
+  });
+};
+
+const dropUsersTable = async () => {
+  const dropTableSql = `DROP TABLE IF EXISTS users CASCADE;`;
+
+  console.log("\ndropTableSql:", dropTableSql);
+
+  await client.query(dropTableSql).then((tableErr, tableRes) => {
+    if (tableErr) {
+      console.log("dropTableSql:", tableErr);
+    }
+
+    if (tableRes) {
+      console.log("DROP TABLE RESULT:", tableRes);
+    }
+  });
+};
+
+const createScoresTable = async () => {
+  const createTableSql = `CREATE TABLE scores(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER,
+    text TEXT NOT NULL,
     sentiment_score INTEGER
   );`;
 
@@ -41,12 +77,12 @@ const createUsersTable = async () => {
   });
 };
 
-const dropUsersTable = () => {
-  const dropTableSql = `DROP TABLE IF EXISTS users CASCADE;`;
+const dropScoresTable = async () => {
+  const dropTableSql = `DROP TABLE IF EXISTS scores CASCADE;`;
 
   console.log("\ndropTableSql:", dropTableSql);
 
-  client.query(dropTableSql).then((tableErr, tableRes) => {
+  await client.query(dropTableSql).then((tableErr, tableRes) => {
     if (tableErr) {
       console.log("dropTableSql:", tableErr);
     }
@@ -57,6 +93,11 @@ const dropUsersTable = () => {
   });
 };
 
-dropUsersTable();
+const runSchema = async () => {
+  await dropScoresTable();
+  await dropUsersTable();
+  await createUsersTable();
+  await createScoresTable();
+};
 
-createUsersTable();
+runSchema();

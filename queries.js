@@ -48,7 +48,7 @@ const createUser = (request, response) => {
   const { username } = request.body;
 
   client.query(
-    "INSERT INTO users (username, sentiment_score) VALUES ($1, 0)",
+    "INSERT INTO users (username) VALUES ($1)",
     [username],
     (error, results) => {
       if (error) {
@@ -60,11 +60,11 @@ const createUser = (request, response) => {
 };
 
 const updateUser = (request, response) => {
-  const { sentiment_score, username, userId } = request.body;
+  const { username, userId } = request.body;
 
   client.query(
-    "UPDATE users SET username = $1, sentiment_score = $2 WHERE id = $3",
-    [username, sentiment_score, userId],
+    "UPDATE users SET username = $1, WHERE id = $2",
+    [username, userId],
     (error, results) => {
       if (error) {
         throw error;
@@ -85,23 +85,38 @@ const deleteUser = (request, response) => {
   });
 };
 
-const createAnalysis = (request, response) => {
-  const userID = request.params.userID;
-  const text = parseInt(request.params.text);
-  const score = parseInt(request.params.score);
+const createScore = (request, response) => {
+  const { score, text, userId } = request.body;
+
+  console.log(score, text, userId);
 
   client.query(
-    "CREATE ANALYSIS idk how to do this...", // Find user in analysis table, which is a table with userID (primary key), text, and score columns
-    [userID, text, score],
+    "INSERT INTO scores (user_id, text, sentiment_score) VALUES ($1, $2, $3)",
+    [userId, text, score],
     (error, results) => {
       if (error) {
         throw error;
       }
       response.status(200).send({
-        userID,
+        userId,
         text,
         score,
       });
+    }
+  );
+};
+
+const getUserScores = (request, response) => {
+  const user_id = parseInt(request.params.user_id);
+
+  client.query(
+    "SELECT * FROM scores WHERE user_id = $1",
+    [user_id],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).send(results.rows);
     }
   );
 };
@@ -112,5 +127,6 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
-  createAnalysis,
+  createScore,
+  getUserScores,
 };
